@@ -5,6 +5,9 @@ My adventures with dockerizing everything.
 
 Notes
 -----
+### Environment variable Files
+Rename 'env.sample' files to '.env'
+
 ### SQL Server
 SQL Server container with bound volumes on linux hosts raises permission issues i.e. the containers have no permissions to write into the bound volumes. Throws the following error:
 
