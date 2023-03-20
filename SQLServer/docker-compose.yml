@@ -3,8 +3,9 @@ version: '3.8'
 services:
   sql-container:
     image: "mcr.microsoft.com/mssql/server:2022-latest-ubuntu"
+    user: root
     restart: ${SQLSERVER_RESTART}
-    container_name: sql-container
+    container_name: sqlserverdb-container
     ports:
       - "${SQLSERVER_PORT}:1433"
     environment:

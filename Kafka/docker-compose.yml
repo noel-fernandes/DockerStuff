@@ -2,8 +2,9 @@ version: "3.8"
 
 services:
   zookeeper:
-    image: bitnami/zookeeper
+    image: bitnami/zookeeper:${ZOOKEEPER_VERSION}
     restart: ${ZOOKEEPER_RESTART}
+    container_name: zookeeper-container
     ports:
       - "${ZOOKEEPER_PORT}:2181"
     volumes:
@@ -34,5 +35,5 @@ volumes:
    
 networks:
   default:
-    external:
-      name: smdockernetwork
+    name: smdockernetwork
+    driver: bridge
