@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+  zookeeper:
+    image: bitnami/zookeeper
+    restart: ${ZOOKEEPER_RESTART}
+    ports:
+      - "${ZOOKEEPER_PORT}:2181"
+    volumes:
+      - "zookeeper_data:/bitnami"
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=${ZOOKEEPER_ALLOW_ANONYMOUS_LOGIN}
+
+  kafka:
+    image: bitnami/kafka
+    ports:
+      - "${KAFKA_PORT}:9092"
+    restart: ${KAFKA_RESTART}
+    volumes:
+      - "kafka_data:/bitnami"
+    environment:
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:${ZOOKEEPER_PORT}
+      - ALLOW_PLAINTEXT_LISTENER=${KAFKA_ALLOW_PLAINTEXT_LISTENER}
+      - KAFKA_LISTENERS=${KAFKA_LISTENERS}
+      - KAFKA_ADVERTISED_LISTENERS=${KAFKA_ADVERTISED_LISTENERS}
+    depends_on:
+      - zookeeper
+
+volumes:
+  zookeeper_data:
+    driver: local
+  kafka_data:
+    driver: local
+   
+networks:
+  default:
+    external:
+      name: smdockernetwork

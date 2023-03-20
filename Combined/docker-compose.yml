@@ -1,0 +1,72 @@
+version: "3.8"
+
+services:
+  zookeeper:
+    image: bitnami/zookeeper:${ZOOKEEPER_VERSION}
+    restart: ${ZOOKEEPER_RESTART}
+    container_name: zookeeper-container
+    ports:
+      - "${ZOOKEEPER_PORT}:2181"
+    volumes:
+      - "zookeeper_data:/bitnami"
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=${ZOOKEEPER_ALLOW_ANONYMOUS_LOGIN}
+
+  kafka:
+    image: bitnami/kafka
+    ports:
+      - "${KAFKA_PORT}:9092"
+    restart: ${KAFKA_RESTART}
+    container_name: kafka-container
+    volumes:
+      - "kafka_data:/bitnami"
+    environment:
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:${ZOOKEEPER_PORT}
+      - ALLOW_PLAINTEXT_LISTENER=${KAFKA_ALLOW_PLAINTEXT_LISTENER}
+      - KAFKA_LISTENERS=${KAFKA_LISTENERS}
+      - KAFKA_ADVERTISED_LISTENERS=${KAFKA_ADVERTISED_LISTENERS}
+    depends_on:
+      - zookeeper
+
+  mongodb:
+    image: mongo:${MONGODB_VERSION}
+    restart: ${MONGODB_RESTART}
+    container_name: mongodb-container
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_INIT_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_INIT_ROOT_PASSWORD}
+    ports:
+      - ${MONGODB_PORT}:27017
+    volumes:
+      - mongodb_data_container:/data/db
+
+  sqlserverdb:
+    image: "mcr.microsoft.com/mssql/server:${SQLSERVER_VERSION}"
+    user: root
+    restart: ${SQLSERVER_RESTART}
+    container_name: sqlserverdb-container
+    ports:
+      - "${SQLSERVER_PORT}:1433"
+    environment:
+      - ACCEPT_EULA=${SQLSERVER_ACCEPT_EULA}
+      - SA_PASSWORD=${SQLSERVER_SA_PASSWORD}
+      - MSSQL_PID=${SQLSERVER_MSSQL_PID}
+    volumes:
+      - mssql_data:/var/opt/mssql/data
+      - mssql_log:/var/opt/mssql/log
+      - mssql_backup:/var/opt/mssql/backup
+
+volumes:
+  zookeeper_data:
+    driver: local
+  kafka_data:
+    driver: local
+  mongodb_data_container:
+  mssql_data:
+  mssql_log:
+  mssql_backup:
+   
+networks:
+  default:
+    name: smdockernetwork
+    driver: bridge

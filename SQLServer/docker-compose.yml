@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  sql-container:
+    image: "mcr.microsoft.com/mssql/server:2022-latest-ubuntu"
+    restart: ${SQLSERVER_RESTART}
+    container_name: sql-container
+    ports:
+      - "${SQLSERVER_PORT}:1433"
+    environment:
+      - ACCEPT_EULA=${SQLSERVER_ACCEPT_EULA}
+      - SA_PASSWORD=${SQLSERVER_SA_PASSWORD}
+      - MSSQL_PID=${SQLSERVER_MSSQL_PID}
+    volumes:
+      - mssql_data:/var/opt/mssql/data
+      - mssql_log:/var/opt/mssql/log
+      - mssql_backup:/var/opt/mssql/backup
+    networks:
+      - smdockernetwork
+
+# Create name volumes managed by Docker to not lose data when remove a container.
+# https://docs.docker.com/compose/compose-file/compose-file-v3/#volumes
+volumes:
+  mssql_data:
+  mssql_log:
+  mssql_backup:

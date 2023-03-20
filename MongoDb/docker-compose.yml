@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  mongo-container:
+    image: mongo:${MONGODB_VERSION}
+    restart: ${MONGODB_RESTART}
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_INIT_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_INIT_ROOT_PASSWORD}
+    ports:
+      - ${MONGODB_PORT}:27017
+    volumes:
+      - mongodb_data_container:/data/db
+    networks:
+      - smdockernetwork
+
+volumes:
+  mongodb_data_container:
